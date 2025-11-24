@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SightGuide | AI Travel Companion</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">SightGuide 🌍</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Destinations</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero-container">
+        
+        <div class="glass-card" id="uploadCard">
+            <h1>Discover the World</h1>
+            <p>Upload a photo. Get a history lesson, a 3-day itinerary, and food tips instantly.</p>
+            
+            <div class="upload-area">
+                <input type="file" id="imageInput" accept="image/*" hidden>
+                <label for="imageInput" class="upload-label">
+                    <div class="icon">📸</div>
+                    <span id="uploadText">Drop image here or click to upload</span>
+                </label>
+            </div>
+            
+            <div id="previewContainer" class="hidden">
+                <img id="preview" alt="Preview">
+            </div>
+
+            <button id="analyzeBtn" disabled>Generate Trip Guide ✨</button>
+            
+            <div id="loading" class="hidden">
+                <div class="spinner"></div>
+                <p>Curating your personal itinerary...</p>
+            </div>
+        </div>
+
+        <div id="result" class="result-container hidden">
+            <button id="closeBtn">× Close Guide</button>
+            
+            <div class="header-section">
+                <h2 id="landmarkName">Landmark Name</h2>
+                <p class="location" id="location">📍 Location</p>
+                <p class="intro" id="description">Description goes here...</p>
+                <a id="mapsLink" href="#" target="_blank" class="maps-btn">Open in Google Maps</a>
+            </div>
+
+            <div class="grid-layout">
+                <div class="info-card">
+                    <h3>📜 History & Culture</h3>
+                    <p id="history">History content...</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>🍜 Local Cuisine</h3>
+                    <ul id="foodList">
+                        </ul>
+                </div>
+            </div>
+
+            <div class="itinerary-card">
+                <h3>🗓️ 3-Day Mini Itinerary</h3>
+                <div class="timeline" id="itineraryList">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
