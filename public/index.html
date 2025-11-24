@@ -5,24 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SightGuide | AI Travel Companion</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
-    <nav class="navbar">
+ <nav class="navbar">
         <div class="logo">SightGuide 🌍</div>
         <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Destinations</a></li>
-            <li><a href="#">About</a></li>
-        </ul>
+    <li><a href="#" id="homeLink">Home</a></li> 
+    <li><a href="#" id="destinationsLink">Destinations</a></li>
+     <li><a href="#" id="aboutLink">About</a></li>
+</ul>
     </nav>
 
     <div class="hero-container">
         
         <div class="glass-card" id="uploadCard">
             <h1>Discover the World</h1>
-            <p>Upload a photo. Get a history lesson, a 3-day itinerary, and food tips instantly.</p>
+            <p>Upload a photo or pick a spot on the map. Get a history lesson, itinerary, and food tips.</p>
             
             <div class="upload-area">
                 <input type="file" id="imageInput" accept="image/*" hidden>
@@ -34,6 +37,13 @@
             
             <div id="previewContainer" class="hidden">
                 <img id="preview" alt="Preview">
+            </div>
+
+            <div class="divider"><span>OR</span></div>
+            
+            <div class="input-group">
+                <input type="text" id="locationInput" class="text-input" placeholder="Enter location or pick on map...">
+                <button id="mapPickerBtn" class="icon-btn" title="Pick on Map">📍</button>
             </div>
 
             <button id="analyzeBtn" disabled>Generate Trip Guide ✨</button>
@@ -62,20 +72,82 @@
 
                 <div class="info-card">
                     <h3>🍜 Local Cuisine</h3>
-                    <ul id="foodList">
-                        </ul>
+                    <ul id="foodList"></ul>
                 </div>
             </div>
 
             <div class="itinerary-card">
                 <h3>🗓️ 3-Day Mini Itinerary</h3>
-                <div class="timeline" id="itineraryList">
-                    </div>
+                <div class="timeline" id="itineraryList"></div>
+            </div>
+
+            <div class="chat-card">
+                <h3>💬 Ask about this place</h3>
+                <div id="chatHistory" class="chat-history">
+                    <div class="message bot-message">Hello! I know all about this place. Ask me anything!</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="Best time to visit? Ticket prices?">
+                    <button id="sendChatBtn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mapModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>📍 Pick Location</h3>
+            <div id="pickerMap"></div>
+            <div class="modal-actions">
+                <button id="locateMeBtn" class="secondary-btn">Target My Location</button>
+                <button id="confirmLocationBtn">Confirm Location</button>
+            </div>
+            <button id="closeMapBtn" class="close-modal">×</button>
+        </div>
+    </div>
+    <div id="aboutModal" class="modal hidden">
+        <div class="modal-content about-content">
+            <h3>About SightGuide 🌍</h3>
+            <p><strong>SightGuide</strong> is your AI-powered travel companion designed to make exploration effortless.</p>
+            
+            <ul style="text-align: left; margin: 20px 0; padding-left: 20px; line-height: 1.6;">
+                <li>📸 <strong>Visual Recognition:</strong> Upload a photo of any landmark, and our AI will identify it instantly.</li>
+                <li>📍 <strong>Smart Location:</strong> Don't have a photo? Pick a spot on the map or type a location name.</li>
+                <li>🗓️ <strong>Instant Planning:</strong> Get a 3-day itinerary, history lessons, and local food recommendations in seconds.</li>
+                <li>💬 <strong>Travel Chat:</strong> Have follow-up questions? Chat with our AI assistant who knows the context of your trip.</li>
+            </ul>
+            
+            <p style="font-size: 0.9rem; color: #64748b;">Powered by Google Gemini AI & OpenStreetMap.</p>
+            <button id="closeAboutBtn" class="close-modal">×</button>
+        </div>
+    </div>
+    <div id="destModal" class="modal hidden">
+    <div class="modal-content">
+        <h3>✨ Popular Destinations</h3>
+        <p>Don't have a photo? Pick a place to see the magic.</p>
+        
+        <div class="dest-grid">
+            <div class="dest-card" onclick="quickSearch('Taj Mahal, India')">
+                <img src="https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=400&auto=format&fit=crop" alt="Taj Mahal">
+                <span>Taj Mahal 🇮🇳</span>
+            </div>
+            <div class="dest-card" onclick="quickSearch('Eiffel Tower, Paris')">
+                <img src="https://images.unsplash.com/photo-1639519306888-419e98f8a5b6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZWlmZmVsJTIwdG93ZXIlMjBuaWdodHxlbnwwfHwwfHx8MA%3D%3D" alt="Eiffel Tower">
+                <span>Eiffel Tower 🇫🇷</span>
+            </div>
+            <div class="dest-card" onclick="quickSearch('Kyoto, Japan')">
+                <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=400&auto=format&fit=crop" alt="Kyoto">
+                <span>Kyoto 🇯🇵</span>
+            </div>
+            <div class="dest-card" onclick="quickSearch('Santorini, Greece')">
+                <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=400&auto=format&fit=crop" alt="Santorini">
+                <span>Santorini 🇬🇷</span>
             </div>
         </div>
 
+        <button id="closeDestBtn" class="close-modal">×</button>
     </div>
-
+</div>
     <script src="script.js"></script>
 </body>
 </html>
